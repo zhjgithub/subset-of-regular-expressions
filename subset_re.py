@@ -7,6 +7,22 @@ dot = ('dot', )
 eol = ('eol', )
 
 
+def search(pattern, text):
+    "Match pattern anywhere in text; return longest earliest match or None."
+    for i in range(len(text)):
+        m = match(pattern, text[i:])
+        if m is not None:
+            return m
+
+
+def match(pattern, text):
+    "Match pattern against start of text; return longest match found or None."
+    remainders = matchset(pattern, text)
+    if remainders:
+        shortest = min(remainders, key=len)
+        return text[:len(text) - len(shortest)]
+
+
 def lit(string):
     return ('lit', string)
 
@@ -92,6 +108,11 @@ def test():
     assert matchset(('eol', ), 'not end of line') == frozenset([])
     assert matchset(('star', ('lit', 'hey')),
                     'heyhey!') == set(['!', 'heyhey!', 'hey!'])
+
+    assert match(('star', ('lit', 'a')), 'aaabcd') == 'aaa'
+    assert match(('alt', ('lit', 'b'), ('lit', 'c')), 'ab') is None
+    assert match(('alt', ('lit', 'b'), ('lit', 'a')), 'ab') == 'a'
+    assert search(('alt', ('lit', 'b'), ('lit', 'c')), 'ab') == 'b'
 
     return 'tests pass'
 
