@@ -1,6 +1,4 @@
 null = frozenset()
-dot = oneof('?')
-epsilon = lit('')
 
 
 def lit(s):
@@ -32,3 +30,29 @@ def seq(x, y):
 
 def opt(x):
     return alt(epsilon, x)
+
+
+dot = oneof('?')
+epsilon = lit('')
+
+
+def genseq(x, y, Ns, startx=0):
+    '''
+    Set of matches to xy whose total len is in Ns, with x-match's len in Ns_x.
+    Tricky part: x+ is defined as: x+ = x x*
+    To stop the recursion, the first x must generate at least 1 char,
+    and then teh recursive x* has that many fewer characters.
+    We use startx=1 to say that x must match at least 1 character.
+    '''
+    if not Ns:
+        return null
+    xmatches = x(set(range(startx, max(Ns) + 1)))
+    Ns_x = set(len(m) for m in xmatches)
+    Ns_y = set(n - m for n in Ns for m in Ns_x if n - m >= 0)
+    ymatches = y(Ns_y)
+    return set(m1 + m2 for m1 in xmatches for m2 in ymatches
+               if len(m1) + len(m2) in Ns)
+
+
+if __name__ == '__main__':
+    print(plus(lit('a'))((5, )))
