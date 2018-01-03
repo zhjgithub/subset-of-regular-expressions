@@ -49,7 +49,7 @@ def matchset(pattern, text):
     elif op == 'dot':
         return set([text[1:]]) if text else null
     elif op == 'oneof':
-        return set([text[1:]]) if any(text.startswith(i) for i in x) else null
+        return set([text[1:]]) if text.startswith(x) else null
     elif op == 'eol':
         return set(['']) if text == '' else null
     elif op == 'star':
@@ -86,8 +86,8 @@ def test():
                     'dog and cat') == set([' and cat'])
     assert matchset(('dot', ), 'am i missing something?') == set(
         ['m i missing something?'])
-    assert matchset(('oneof', 'a'), 'aabc123') == set(['abc123'])
-    assert matchset(('oneof', 'ab'), 'aabc123') == set(['abc123'])
+    assert matchset(oneof('a'), 'aabc123') == set(['abc123'])
+    assert matchset(oneof('ab'), 'aabc123') == set(['abc123'])
     assert matchset(('eol', ), '') == set([''])
     assert matchset(('eol', ), 'not end of line') == frozenset([])
     assert matchset(('star', ('lit', 'hey')),
