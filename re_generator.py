@@ -4,7 +4,9 @@ epsilon = lit('')
 
 
 def lit(s):
-    return lambda Ns: set([s]) if len(s) in Ns else null
+    set_s = set([s])
+    len_s = len(s)
+    return lambda Ns: set_s if len_s in Ns else null
 
 
 def alt(x, y):
@@ -20,7 +22,8 @@ def plus(x):
 
 
 def oneof(chars):
-    return lambda Ns: set(chars) if 1 in Ns else null
+    set_chars = set(chars)
+    return lambda Ns: set_chars if 1 in Ns else null
 
 
 def seq(x, y):
