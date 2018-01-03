@@ -3,8 +3,8 @@ Exercise of subset of Regular Expressions implement.
 '''
 
 null = frozenset()
-dot = ('dot', )
-eol = ('eol', )
+dot = lambda text: set([text[1:]]) if text else null
+eol = lambda text: set(['']) if text == '' else null
 
 
 def search(pattern, text):
@@ -17,30 +17,30 @@ def search(pattern, text):
 
 def match(pattern, text):
     "Match pattern against start of text; return longest match found or None."
-    remainders = matchset(pattern, text)
+    remainders = pattern(text)
     if remainders:
         shortest = min(remainders, key=len)
         return text[:len(text) - len(shortest)]
 
 
-def lit(string):
-    return ('lit', string)
+def lit(s):
+    return lambda text: set([text[len(s):]]) if text.startswith(s) else null
 
 
 def seq(x, y):
-    return ('seq', x, y)
+    return lambda text: set.union(*map(y, x(text)))
 
 
 def alt(x, y):
-    return ('alt', x, y)
+    return lambda text: set.union(x(text), y(text))
 
 
 def star(x):
-    return ('star', x)
+    return lambda text: set([text]) | set(t2 for t1 in x(text) if t1 != text for t2 in star(x)(t1))
 
 
 def plus(x):
-    return (seq(x, star(x)))
+    return seq(x, star(x))
 
 
 def opt(x):
@@ -48,7 +48,7 @@ def opt(x):
 
 
 def oneof(chars):
-    return ('oneof', tuple(chars))
+    return lambda text: set([text[1:]]) if text and text[0] in chars else null
 
 
 def matchset(pattern, text):
@@ -113,6 +113,9 @@ def test():
     assert match(('alt', ('lit', 'b'), ('lit', 'c')), 'ab') is None
     assert match(('alt', ('lit', 'b'), ('lit', 'a')), 'ab') == 'a'
     assert search(('alt', ('lit', 'b'), ('lit', 'c')), 'ab') == 'b'
+
+    g = alt(lit('a'), lit('b'))
+    assert g('abc') == set(['bc'])
 
     return 'tests pass'
 
