@@ -56,11 +56,12 @@ def n_ary(f):
     that f(x, y, z) = f(x, f(y,z)), etc. Also allow f(x) = x."""
 
     def n_ary_f(x, *args):
-        if not args:
-            return x
-        elif len(args) == 1:
-            return f(x, *args)
-        return f(x, n_ary_f(args[0], *args[1:]))
+        # if not args:
+        #     return x
+        # elif len(args) == 1:
+        #     return f(x, *args)
+        # return f(x, n_ary_f(args[0], *args[1:]))
+        return x if not args else f(x, n_ary_f(*args))
 
     return n_ary_f
 
