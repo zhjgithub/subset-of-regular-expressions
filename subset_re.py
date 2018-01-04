@@ -53,6 +53,16 @@ def oneof(chars):
     return lambda text: set([text[1:]]) if text and text[0] in chars else null
 
 
+def decorator(d):
+    "Make function d a decorator: d wrap a function fn."
+    def _d(fn):
+        return update_wrapper(d(fn), fn)
+
+    update_wrapper(_d, d)
+    return _d
+
+
+@decorator
 def n_ary(f):
     """Given binary function f(x, y), return an n_ary function such
     that f(x, y, z) = f(x, f(y,z)), etc. Also allow f(x) = x."""
@@ -64,8 +74,6 @@ def n_ary(f):
         #     return f(x, *args)
         # return f(x, n_ary_f(args[0], *args[1:]))
         return x if not args else f(x, n_ary_f(*args))
-
-    update_wrapper(n_ary_f, f)
 
     return n_ary_f
 
@@ -163,3 +171,4 @@ if __name__ == '__main__':
 
     print(test_fun2(1, 2, 3, 4))
     help(test_fun2)
+    help(n_ary)
