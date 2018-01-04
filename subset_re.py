@@ -2,6 +2,8 @@
 Exercise of subset of Regular Expressions implement.
 '''
 
+from functools import update_wrapper
+
 null = frozenset()
 dot = lambda text: set([text[1:]]) if text else null
 eol = lambda text: set(['']) if text == '' else null
@@ -62,6 +64,8 @@ def n_ary(f):
         #     return f(x, *args)
         # return f(x, n_ary_f(args[0], *args[1:]))
         return x if not args else f(x, n_ary_f(*args))
+
+    update_wrapper(n_ary_f, f)
 
     return n_ary_f
 
@@ -154,6 +158,8 @@ if __name__ == '__main__':
 
     @n_ary
     def test_fun2(x, y):
+        "test_fun2 wrapped in decorator"
         return ('seq', x, y)
 
     print(test_fun2(1, 2, 3, 4))
+    help(test_fun2)
