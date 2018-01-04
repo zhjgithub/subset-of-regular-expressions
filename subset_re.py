@@ -51,6 +51,20 @@ def oneof(chars):
     return lambda text: set([text[1:]]) if text and text[0] in chars else null
 
 
+def n_ary(f):
+    """Given binary function f(x, y), return an n_ary function such
+    that f(x, y, z) = f(x, f(y,z)), etc. Also allow f(x) = x."""
+
+    def n_ary_f(x, *args):
+        if not args:
+            return x
+        elif len(args) == 1:
+            return f(x, *args)
+        return f(x, n_ary_f(args[0], *args[1:]))
+
+    return n_ary_f
+
+
 def matchset(pattern, text):
     '''
     Match pattern at start of text; return a set of remainders of text.
@@ -121,4 +135,12 @@ def test():
 
 
 if __name__ == '__main__':
-    print(test())
+    # print(test())
+    def f(x, y):
+        return x + y
+
+    fn = n_ary(f)
+    print(fn(1))
+    print(fn(1, 2))
+    print(fn(1, 2, 3))
+    print(fn(1, 2, 3, 4))
