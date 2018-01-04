@@ -151,3 +151,9 @@ if __name__ == '__main__':
 
     test_fun = n_ary(test_fun)
     print(test_fun(1, 2, 3, 4))
+
+    @n_ary
+    def test_fun2(x, y):
+        return ('seq', x, y)
+
+    print(test_fun2(1, 2, 3, 4))
