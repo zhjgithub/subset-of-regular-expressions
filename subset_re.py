@@ -138,8 +138,7 @@ def test():
     return 'tests pass'
 
 
-if __name__ == '__main__':
-    # print(test())
+def test2():
     def f(x, y):
         return x + y
 
@@ -164,3 +163,9 @@ if __name__ == '__main__':
     print(test_fun2(1, 2, 3, 4))
     help(test_fun2)
     help(n_ary)
+    print('test2 success')
+
+
+if __name__ == '__main__':
+    # print(test())
+    test2()
