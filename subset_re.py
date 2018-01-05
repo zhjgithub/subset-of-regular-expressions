@@ -55,6 +55,7 @@ def oneof(chars):
 
 def decorator(d):
     "Make function d a decorator: d wrap a function fn."
+
     def _d(fn):
         return update_wrapper(d(fn), fn)
 
@@ -64,6 +65,30 @@ def decorator(d):
 
 @decorator
 def n_ary(f):
+    """Given binary function f(x, y), return an n_ary function such
+    that f(x, y, z) = f(x, f(y,z)), etc. Also allow f(x) = x."""
+
+    def n_ary_f(x, *args):
+        # if not args:
+        #     return x
+        # elif len(args) == 1:
+        #     return f(x, *args)
+        # return f(x, n_ary_f(args[0], *args[1:]))
+        return x if not args else f(x, n_ary_f(*args))
+
+    return n_ary_f
+
+
+def decorator2(d):
+    "make function d a decorator2, return lamda"
+    return lambda fn: update_wrapper(d(fn), fn)
+
+
+decorator2 = decorator2(decorator2)
+
+
+@decorator2
+def n_ary2(f):
     """Given binary function f(x, y), return an n_ary function such
     that f(x, y, z) = f(x, f(y,z)), etc. Also allow f(x) = x."""
 
@@ -153,6 +178,7 @@ if __name__ == '__main__':
         return x + y
 
     fn = n_ary(f)
+
     print(fn(1))
     print(fn(1, 2))
     print(fn(1, 2, 3))
@@ -172,3 +198,11 @@ if __name__ == '__main__':
     print(test_fun2(1, 2, 3, 4))
     help(test_fun2)
     help(n_ary)
+
+    @n_ary2
+    def test_fun3(x, y):
+        "test_fun3 docstrings"
+        return ('seq', x, y)
+
+    help(n_ary2)
+    help(test_fun3)
