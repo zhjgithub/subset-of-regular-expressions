@@ -36,12 +36,29 @@ def memo(f):
     return _f
 
 
+callcounts = {}
+
+
+@decorator
+def countcalls(f):
+    "Decorator that makes the function count calls to it, in callcounts[f]"
+
+    def _f(*args):
+        callcounts[_f] += 1
+        return f(*args)
+
+    callcounts[_f] = 0
+    return _f
+
+
+@countcalls
 def fibonacci(n):
     if n <= 1:
         return n
     return fibonacci(n - 1) + fibonacci(n - 2)
 
 
+@countcalls
 @memo
 def fibonacci_with_cache(n):
     if n <= 1:
@@ -68,6 +85,7 @@ def test():
     start = time.clock()
     print(fibonacci_with_cache(20))
     print(time.clock() - start)
+    print(callcounts)
     print('test success')
 
 
