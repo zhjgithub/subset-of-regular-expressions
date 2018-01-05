@@ -5,6 +5,11 @@ Decorator and update_wrapper.
 from functools import update_wrapper
 
 
+def disabled(f):
+    "Disable a decorator, like some_decorator = disabled."
+    return f
+
+
 def decorator(d):
     "Make function d a decorator: d wrap a function fn."
 
@@ -71,6 +76,9 @@ def trace(f):
     return _f
 
 
+trace = disabled
+
+
 @trace
 def fibonacci(n):
     if n <= 1:
@@ -88,7 +96,7 @@ def fibonacci_with_cache(n):
 
 
 def decorator2(d):
-    "make function d a decorator2, return lamda"
+    "make function d a decorator2, return lambda"
     return lambda fn: update_wrapper(d(fn), fn)
 
 
