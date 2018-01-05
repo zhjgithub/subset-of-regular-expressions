@@ -46,7 +46,7 @@ def fibonacci(n):
 def fibonacci_with_cache(n):
     if n <= 1:
         return n
-    return fibonacci(n - 1) + fibonacci(n - 2)
+    return fibonacci_with_cache(n - 1) + fibonacci_with_cache(n - 2)
 
 
 def decorator2(d):
