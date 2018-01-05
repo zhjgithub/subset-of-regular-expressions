@@ -51,15 +51,36 @@ def countcalls(f):
     return _f
 
 
-@countcalls
+@decorator
+def trace(f):
+    indent = '   '
+
+    def _f(*args):
+        signature = '%s(%s)' % (f.__name__, ', '.join(map(repr, args)))
+        print('%s--> %s' % (trace.level * indent, signature))
+        trace.level += 1
+        try:
+            result = f(*args)
+            print('%s<-- %s == %s' % ((trace.level - 1) * indent, signature,
+                                      result))
+        finally:
+            trace.level -= 1
+        return result
+
+    trace.level = 0
+    return _f
+
+
+@trace
 def fibonacci(n):
     if n <= 1:
         return n
     return fibonacci(n - 1) + fibonacci(n - 2)
 
 
-@countcalls
+@trace
 @memo
+@countcalls
 def fibonacci_with_cache(n):
     if n <= 1:
         return n
@@ -77,7 +98,7 @@ decorator2 = decorator2(decorator2)
 def test():
     import time
     start = time.clock()
-    print(fibonacci(20))
+    print(fibonacci(6))
     print(time.clock() - start)
     start = time.clock()
     print(fibonacci_with_cache(20))
