@@ -6,15 +6,15 @@ from grammar import grammar, parse, verify
 
 JSON = grammar(
     r"""
-value       => array | object | string | number
-array       => [[] elements []]
+value       => array | object | string | number | true | false | null
+array       => [[] []] | [[] elements []]
 elements    => value , elements | value
 string      => "[^"]*"
-number      => int frac exp | int frac | int
-int         => [-+]?\d+
-frac        => \.\d*
-exp         => e\+\d+
-object      => { members }
+number      => int frac exp | int frac | int exp | int
+int         => -?[1-9]\d*
+frac        => [.]\d+
+exp         => [eE][+-]?\d+
+object      => { } | { members }
 members     => pair , members | pair
 pair        => string : value
 """,
